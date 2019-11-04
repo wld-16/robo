@@ -11,6 +11,7 @@ namespace Valve.VR.Extras
         public event GazeEventHandler GazeOff;
         public float gazeInCutoff = 0.15f;
         public float gazeOutCutoff = 0.4f;
+        public GameObject hmd;
 
         // Contains a HMD tracked object that we can use to find the user's gaze
         protected Transform hmdTrackedObject = null;
@@ -53,20 +54,23 @@ namespace Valve.VR.Extras
                 {
                     Vector3 intersect = hmdTrackedObject.position + hmdTrackedObject.forward * enter;
                     float dist = Vector3.Distance(intersect, transform.position);
-                    //Debug.Log("Gaze dist = " + dist);
                     if (dist < gazeInCutoff && !isInGaze)
                     {
                         isInGaze = true;
                         GazeEventArgs gazeEventArgs;
                         gazeEventArgs.distance = dist;
+                        gazeEventArgs.hmd = hmdTrackedObject.transform;
                         OnGazeOn(gazeEventArgs);
+                        hmd = hmdTrackedObject.gameObject;
                     }
                     else if (dist >= gazeOutCutoff && isInGaze)
                     {
                         isInGaze = false;
                         GazeEventArgs gazeEventArgs;
                         gazeEventArgs.distance = dist;
+                        gazeEventArgs.hmd = hmdTrackedObject.transform;
                         OnGazeOff(gazeEventArgs);
+                        hmd = hmdTrackedObject.gameObject;
                     }
                 }
 
@@ -77,6 +81,7 @@ namespace Valve.VR.Extras
     public struct GazeEventArgs
     {
         public float distance;
+        public Transform hmd;
     }
 
     public delegate void GazeEventHandler(object sender, GazeEventArgs gazeEventArgs);
