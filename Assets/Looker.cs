@@ -38,6 +38,11 @@ public class Looker : MonoBehaviour
             } 
             transform.rotation = Quaternion.LookRotation(transform.position - lookAt.transform.position);
         }
+        else
+        {
+            if (!coroutineRunning)
+                DisableUI();
+        }
     }
 
     public void ReachedDestination()
@@ -47,12 +52,18 @@ public class Looker : MonoBehaviour
     
     public void ShowRedCube()
     {
-        StartCoroutine(FollowMeStatement());
+        StartCoroutine(FollowMeStatement(redCube));
     }
 
     public void ShowBlueCube()
     {
-        StartCoroutine(FollowMeStatement());
+        StartCoroutine(FollowMeStatement(blueCube));
+    }
+
+    public void DisableUI()
+    {
+        responsePanel.gameObject.SetActive(false);
+        actionPanel.gameObject.SetActive(false);
     }
     
     IEnumerator HelpDialog()
@@ -77,12 +88,12 @@ public class Looker : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator FollowMeStatement()
+    IEnumerator FollowMeStatement(GameObject destinationObject)
     {
         actionPanel.gameObject.SetActive(false);
         responsePanel.gameObject.SetActive(true);
         responseText.text = "Follow me";
-        roboBehaviour.MoveTowards(blueCube.transform);
+        roboBehaviour.MoveTowards(destinationObject.transform);
         yield return new WaitForSeconds(3f);
         responsePanel.gameObject.SetActive(false);
         yield return null;
