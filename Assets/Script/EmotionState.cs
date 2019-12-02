@@ -14,13 +14,13 @@ public enum Emotion : byte {
 
 [StructLayout (LayoutKind.Sequential, Pack = 1)]
 public struct EmotionState {
-    float Angry;
-    float Disgust;
-    float Fear;
-    float Happy;
-    float Sad;
-    float Surprise;
-    float Neutral;
+    public float Angry;
+    public float Disgust;
+    public float Fear;
+    public float Happy;
+    public float Sad;
+    public float Surprise;
+    public float Neutral;
 
     public Emotion GetHighestEmotion (Emotion[] ignore = null) {
         byte[] ignoreBytes = null;
