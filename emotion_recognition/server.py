@@ -16,8 +16,8 @@ def main():
         # grab the output tensor of the net
         emotions_tensor = session.graph.get_tensor_by_name('predictions/Softmax:0')
         print(normpath(realpath(cv2.__file__)))
-        classifier = cv2.CascadeClassifier('/home/spacewave/opencv_build/opencv/data/haarcascades/haarcascade_frontalface_default.xml')
-
+        #classifier = cv2.CascadeClassifier('/home/spacewave/opencv_build/opencv/data/haarcascades/haarcascade_frontalface_default.xml')
+        classifier = cv2.CascadeClassifier('D:\Program Files (x86)\Anaconda3\Lib\site-packages\cv2\data\haarcascade_frontalface_default.xml')
         # create listening socket
         listen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -60,7 +60,7 @@ def main():
                         frame = np.flip(frame, axis=1)
                         print(cap.get(3))
                         print(cap.get(4))
-                        
+
                         faces = classifier.detectMultiScale(frame, minSize=(80, 80))
 
                         faces = scale_rects(faces, FACE_SCALE_FACTOR, frame.shape)
