@@ -1,18 +1,43 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using Valve.Newtonsoft.Json;
 using Valve.VR;
 using Valve.VR.Extras;
 
 public class RoboBehaviour : MonoBehaviour
 {
+    
+    /*
+     * Controller:
+     * - Idle
+     * - Checks for:
+     *     - in Range?
+     *         - if true: Eye contact?
+     *             - if true: Emotion right?
+     *                 - if true: move towards
+     *                 - trigger interaction
+     *                     - if positive: move towards search object
+     *                         - if object found: - check emotion
+     *                             - if happy: - end interaction, return to start point
+     *                             - if unhappy: - feedback interaction (Do you need more help?)
+     *                                 - if true: - restart interaction at point x
+     *                                 - if false: - end interaction, return to start point
+     *                     - if negative: return to start position
+     *                         - remember to not approach this player for x seconds
+     *                 - if cant be read: - start interaction
+     *     - if any is false: - dont move
+     */
+    
     private SteamVR_GazeTracker steamVR_GazeTracker;
     private Rigidbody rb;
     private Animator anim;
 
     public float speed = 20f;
+    public float sonarRange;
 
     public float lookTime = 0f;
     public float moveTime = 3f;
@@ -25,9 +50,9 @@ public class RoboBehaviour : MonoBehaviour
     private float startTime;
     private bool movingToOrigin = false;
     private bool reachingToCube = false;
-    private float stopBefore = 3f;
+    public float stopBefore = 3f;
     public bool stoppable = true;
-
+    private GameObject gazedBy;
 
     // Start is called before the first frame update
     void Start()
@@ -36,28 +61,25 @@ public class RoboBehaviour : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         steamVR_GazeTracker = GetComponent<SteamVR_GazeTracker>();
         anim = GetComponent<Animator>();
-        steamVR_GazeTracker.GazeOn += Approach;
+        steamVR_GazeTracker.GazeOn += SetGazedBy;
+        
     }
 
-    void Approach(object sender, GazeEventArgs gazeEventArgs)
+    public GameObject GetGazedBy()
     {
-        var gazedByPosition = gazeEventArgs.hmd.transform.position;
-        var directionVector = gazedByPosition - transform.position;
+        return gazedBy;
+    }
 
-        if (stoppable)
-        {
-            if (moveWithNavMesh)
-            {
-                anim.SetBool("Walk_Anim", true);
-                navMeshAgent.SetDestination(gazedByPosition -
-                                            (directionVector.normalized * stopBefore));
-            }
-            else
-            {
+    void SetGazedBy(object sender, GazeEventArgs gazeEventArgs)
+    {
+        Vector3 gazedByPosition = gazeEventArgs.hmd.transform.position;
+        gazedBy = gazeEventArgs.hmd.gameObject;
+        
+        
+            /*
                 StartCoroutine(MoveTo(gazedByPosition - (directionVector - (directionVector.normalized * stopBefore)),
                     -steamVR_GazeTracker.hmd.transform.forward));
-            }   
-        }
+          */
     }
 
     public void MoveTowards(Transform destination)
@@ -68,9 +90,20 @@ public class RoboBehaviour : MonoBehaviour
         }
         else
         {
-            if (destination.GetComponent<GoalTrigger>() != null) stoppable = false;
             navMeshAgent.SetDestination(destination.position);
         }
+    }
+    
+    public List<GameObject> InRange(String tagToCheck)
+    {
+        RaycastHit[] raycastHits;
+        raycastHits = Physics.SphereCastAll(transform.position, sonarRange, transform.forward);
+        return raycastHits.Where(hit => hit.collider.CompareTag(tagToCheck)).Select(hit => hit.collider.gameObject).ToList();
+    }
+    
+    public bool NotHappy(EmotionState emotionState)
+    {
+        return true;
     }
 
     // Update is called once per frame
@@ -81,6 +114,8 @@ public class RoboBehaviour : MonoBehaviour
         else
             lookTime = 0;
     }
+    
+    
 
     IEnumerator MoveTo(Vector3 goalPosition, Vector3 rotationAngle, bool reachingForShowpoint = false)
     {
