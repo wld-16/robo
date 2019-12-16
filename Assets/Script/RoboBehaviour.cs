@@ -37,7 +37,7 @@ public class RoboBehaviour : MonoBehaviour
     private Animator anim;
 
     public float speed = 20f;
-    public float sonarRange;
+    public float sonarRange = 5;
 
     public float lookTime = 0f;
     public float moveTime = 3f;
@@ -98,6 +98,7 @@ public class RoboBehaviour : MonoBehaviour
     {
         RaycastHit[] raycastHits;
         raycastHits = Physics.SphereCastAll(transform.position, sonarRange, transform.forward);
+        Debug.Log(raycastHits.Length);
         return raycastHits.Where(hit => hit.collider.CompareTag(tagToCheck)).Select(hit => hit.collider.gameObject).ToList();
     }
     

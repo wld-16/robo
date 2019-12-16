@@ -18,9 +18,20 @@ public class IdleState : StateMachineBehaviour
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         roboBehaviour = animator.GetComponent<RoboBehaviour>();
-        if (roboBehaviour.NotHappy(roboBehaviour.InRange("Player")
+        /*if (roboBehaviour.NotHappy(roboBehaviour.InRange("Player")
             .Where(GO => roboBehaviour.GetGazedBy() == GO).ToList()
             .First().GetComponent<EmotionState>()))
+        {
+            animator.SetTrigger(Move);
+        }
+        */
+        
+        
+        if (roboBehaviour.InRange("Player").ToList().Where(GO =>
+        {
+            Debug.Log(GO.name);
+            return roboBehaviour.GetGazedBy() == GO;
+        }).ToList().Count > 0)
         {
             animator.SetTrigger(Move);
         }
