@@ -62,7 +62,6 @@ public class RoboBehaviour : MonoBehaviour
         steamVR_GazeTracker = GetComponent<SteamVR_GazeTracker>();
         anim = GetComponent<Animator>();
         steamVR_GazeTracker.GazeOn += SetGazedBy;
-        
     }
 
     public GameObject GetGazedBy()
@@ -98,8 +97,13 @@ public class RoboBehaviour : MonoBehaviour
     {
         RaycastHit[] raycastHits;
         raycastHits = Physics.SphereCastAll(transform.position, sonarRange, transform.forward);
-        Debug.Log(raycastHits.Length);
-        return raycastHits.Where(hit => hit.collider.CompareTag(tagToCheck)).Select(hit => hit.collider.gameObject).ToList();
+        List<GameObject> validHits = new List<GameObject>();
+        foreach (RaycastHit hit in raycastHits)
+        {
+            if (hit.transform.parent != null && hit.transform.parent.CompareTag(tagToCheck))
+                validHits.Add(hit.transform.gameObject);
+        }
+        return validHits;
     }
     
     public bool NotHappy(EmotionState emotionState)

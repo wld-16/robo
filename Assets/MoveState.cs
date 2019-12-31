@@ -5,24 +5,52 @@ using UnityEngine.AI;
 
 public class MoveState : StateMachineBehaviour
 {
+
+    NavMeshAgent navMeshAgent;
+    RoboBehaviour roboBehaviour;
+    globalVars gV;
+
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        NavMeshAgent navMeshAgent =  animator.GetComponent<NavMeshAgent>();
-        RoboBehaviour roboBehaviour = animator.GetComponent<RoboBehaviour>();
+        navMeshAgent =  animator.GetComponent<NavMeshAgent>();
+        roboBehaviour = animator.GetComponent<RoboBehaviour>();
+        gV = animator.GetComponent<globalVars>();
 
-        GameObject gazedBy = roboBehaviour.GetGazedBy();
-        var position = gazedBy.transform.position;
-        Vector3 directionVector = position - animator.transform.position;
-        
-        navMeshAgent.SetDestination(position - (directionVector.normalized * roboBehaviour.stopBefore));
+        //GameObject gazedBy = roboBehaviour.GetGazedBy();
+        GameObject follow = gV.followGO;
+        if (follow != null)
+        {
+            var position = follow.transform.position;
+            Vector3 directionVector = position - animator.transform.position;
+            Debug.Log(Vector3.Distance(position, position - (directionVector.normalized * roboBehaviour.stopBefore)));
+            navMeshAgent.SetDestination(position - (directionVector.normalized * roboBehaviour.stopBefore));
+        }
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+       if (navMeshAgent.destination != gV.followGO.transform.position)
+        {
+            var position = gV.followGO.transform.position;
+            Vector3 directionVector = position - animator.transform.position;
+            navMeshAgent.SetDestination(position - (directionVector.normalized * roboBehaviour.stopBefore));
+           
+        }
+        if (!navMeshAgent.pathPending)
+        {
+            if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+            {
+                if (!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
+                {
+                    Debug.Log(Vector3.Distance(navMeshAgent.transform.position, gV.followGO.transform.position));
+                    animator.SetTrigger("targetReached");
+                }
+            }
+        }
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
