@@ -1,14 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class HelpState : StateMachineBehaviour
 {
+
+    globalVars gV;
+    NavMeshAgent agent;
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        gV = animator.GetComponent<globalVars>();
+        agent = animator.GetComponent<NavMeshAgent>();
+
+        gV.helpPanel.SetActive(true);
+        gV.feedbackPanel.SetActive(false);
+        gV.searchingObjPanel.SetActive(false);
+
+        
+    }
+
+    private IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(gV.waitingForNextPanel);
+        gV.helpPanel.SetActive(false);
+        gV.searchingObjPanel.SetActive(true);
+    }
+
+    public void SetDestination(Vector3 pos)
+    {
+        agent.SetDestination(pos);
+    }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

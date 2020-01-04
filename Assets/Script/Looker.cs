@@ -6,6 +6,10 @@ using UnityEngine.UI;
 
 public class Looker : MonoBehaviour
 {
+    public globalVars gV;
+    public Transform[] destinations;
+
+    public Dropdown dropdown;
 
     public GameObject lookAt;
     public GameObject responsePanel;
@@ -38,6 +42,12 @@ public class Looker : MonoBehaviour
             } 
             transform.rotation = Quaternion.LookRotation(transform.position - lookAt.transform.position);
         }
+    }
+
+    public void SetDestination()
+    {
+        Debug.Log(dropdown.options[dropdown.value]);
+        //gV.destination = destinations[option];
     }
 
     public void ReachedDestination()

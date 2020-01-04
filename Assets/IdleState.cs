@@ -34,7 +34,7 @@ public class IdleState : StateMachineBehaviour
         {
             if (roboBehaviour.GetGazedBy().transform.root == player.transform.root)
             {
-                gV.followGO = player;
+                gV.destination = player.transform;
                 animator.SetTrigger("statesCorrect");
             }
         }

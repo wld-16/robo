@@ -14,6 +14,9 @@ public class InteractionState : StateMachineBehaviour
 
         gV.interactionCanvas.gameObject.SetActive(true);
 
+        gV.helpPanel.SetActive(false);
+        gV.searchingObjPanel.SetActive(false);
+        gV.feedbackPanel.SetActive(false);
 
         //Emotion Check fehlt noch
         if (!gV.asked)

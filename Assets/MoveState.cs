@@ -19,7 +19,7 @@ public class MoveState : StateMachineBehaviour
         gV = animator.GetComponent<globalVars>();
 
         //GameObject gazedBy = roboBehaviour.GetGazedBy();
-        GameObject follow = gV.followGO;
+        Transform follow = gV.destination;
         if (follow != null)
         {
             var position = follow.transform.position;
@@ -32,9 +32,9 @@ public class MoveState : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       if (navMeshAgent.destination != gV.followGO.transform.position)
+       if (navMeshAgent.destination != gV.destination.transform.position)
         {
-            var position = gV.followGO.transform.position;
+            var position = gV.destination.transform.position;
             Vector3 directionVector = position - animator.transform.position;
             navMeshAgent.SetDestination(position - (directionVector.normalized * roboBehaviour.stopBefore));
            
@@ -45,7 +45,7 @@ public class MoveState : StateMachineBehaviour
             {
                 if (!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
                 {
-                    Debug.Log(Vector3.Distance(navMeshAgent.transform.position, gV.followGO.transform.position));
+                    //Debug.Log(Vector3.Distance(navMeshAgent.transform.position, gV.destination.transform.position));
                     animator.SetTrigger("targetReached");
                 }
             }
