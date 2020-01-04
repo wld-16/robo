@@ -13,7 +13,8 @@ public class GoalTrigger : MonoBehaviour
         if (other.CompareTag("helper"))
         {
             if (other.GetComponent<RoboBehaviour>().moveWithNavMesh)
-                other.GetComponent<RoboBehaviour>().ReachedDestination();
+                Debug.Log("Goal");
+                //other.GetComponent<RoboBehaviour>().ReachedDestination();
         } 
     }
 }

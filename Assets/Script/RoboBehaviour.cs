@@ -73,26 +73,8 @@ public class RoboBehaviour : MonoBehaviour
     {
         Vector3 gazedByPosition = gazeEventArgs.hmd.transform.position;
         gazedBy = gazeEventArgs.hmd.gameObject;
-        
-        
-            /*
-                StartCoroutine(MoveTo(gazedByPosition - (directionVector - (directionVector.normalized * stopBefore)),
-                    -steamVR_GazeTracker.hmd.transform.forward));
-          */
     }
 
-    public void MoveTowards(Transform destination)
-    {
-        if (!moveWithNavMesh)
-        {
-            StartCoroutine(MoveTo(destination.position, -steamVR_GazeTracker.hmd.transform.forward, true));
-        }
-        else
-        {
-            navMeshAgent.SetDestination(destination.position);
-        }
-    }
-    
     public List<GameObject> InRange(String tagToCheck)
     {
         RaycastHit[] raycastHits;
@@ -118,34 +100,5 @@ public class RoboBehaviour : MonoBehaviour
             lookTime += Time.deltaTime;
         else
             lookTime = 0;
-    }
-    
-    
-
-    IEnumerator MoveTo(Vector3 goalPosition, Vector3 rotationAngle, bool reachingForShowpoint = false)
-    {
-        move = true;
-        rb.angularDrag = 0f;
-        anim.SetBool("Walk_Anim", true);
-        while (Vector3.Distance(transform.position, goalPosition) > stopBefore)
-        {
-            rb.AddForce((goalPosition - transform.position).normalized * speed);
-            rb.AddTorque(Vector3.Lerp(transform.rotation.eulerAngles, rotationAngle,
-                             lookTime / 3) * rotationSpeed);
-            yield return null;
-        }
-
-        move = false;
-        rb.angularDrag = Mathf.Infinity;
-        rb.velocity = Vector3.zero;
-        anim.SetBool("Walk_Anim", false);
-        if (reachingForShowpoint) looker.ReachedDestination();
-        yield return null;
-    }
-
-    public void ReachedDestination()
-    {
-        stoppable = true;
-        looker.ReachedDestination();
     }
 }

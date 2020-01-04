@@ -9,20 +9,18 @@ public class Looker : MonoBehaviour
     public globalVars gV;
     public Transform[] destinations;
 
-    public Dropdown dropdown;
-
     public GameObject lookAt;
+
     public GameObject responsePanel;
     public Text responseText;
+
+    public Dropdown dropdown;
     public GameObject actionPanel;
+
     public float rangeShow = 40f;
     public bool coroutineRunning = false;
-    public RoboBehaviour roboBehaviour;
-    
-    public Transform origin;
 
-    public GameObject blueCube;
-    public GameObject redCube;
+    public RoboBehaviour roboBehaviour;
     
     // Start is called before the first frame update
     void Start()
@@ -35,36 +33,32 @@ public class Looker : MonoBehaviour
     {
         if (Vector3.Distance(transform.position, lookAt.transform.position) <= rangeShow)
         {
-            if (!coroutineRunning)
-            {
-                coroutineRunning = true;
-                StartCoroutine(HelpDialog());
-            } 
             transform.rotation = Quaternion.LookRotation(transform.position - lookAt.transform.position);
         }
     }
-
+    
     public void SetDestination()
     {
-        Debug.Log(dropdown.options[dropdown.value]);
-        //gV.destination = destinations[option];
+        gV.destination = destinations[dropdown.value - 1].position;
+        gV.asked = true;
+        StartFollowDialog();
     }
 
-    public void ReachedDestination()
+    public void StartHelpDialog()
+    {
+        StartCoroutine(HelpDialog());
+    }
+
+    public void StartArrivalDialog()
     {
         StartCoroutine(ArrivalDialogue());
     }
-    
-    public void ShowRedCube()
+
+    public void StartFollowDialog()
     {
         StartCoroutine(FollowMeStatement());
     }
 
-    public void ShowBlueCube()
-    {
-        StartCoroutine(FollowMeStatement());
-    }
-    
     IEnumerator HelpDialog()
     {
         responsePanel.gameObject.SetActive(true);
@@ -78,10 +72,8 @@ public class Looker : MonoBehaviour
     IEnumerator ArrivalDialogue()
     {
         responsePanel.gameObject.SetActive(true);
-        Debug.Log("arrived");
         responseText.text = "There you go!";
         yield return new WaitForSeconds(5f);
-        roboBehaviour.MoveTowards(origin);
         responseText.text = "I go back to my origin now!";
         coroutineRunning = false;
         yield return null;
@@ -92,7 +84,6 @@ public class Looker : MonoBehaviour
         actionPanel.gameObject.SetActive(false);
         responsePanel.gameObject.SetActive(true);
         responseText.text = "Follow me";
-        roboBehaviour.MoveTowards(blueCube.transform);
         yield return new WaitForSeconds(3f);
         responsePanel.gameObject.SetActive(false);
         yield return null;
