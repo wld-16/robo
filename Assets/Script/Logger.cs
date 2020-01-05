@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using Valve.VR.InteractionSystem;
@@ -11,7 +14,16 @@ public class Logger : MonoBehaviour
     public SeeEmotion seeEmotion;
     public Transform playerHead;
     public Transform robotHead;
+    private HandleTextFile handleTextFile;
+    public string logLocation;
 
+    void Start()
+    {
+        StreamWriter writer = new StreamWriter(logLocation, false);
+        writer.WriteLine("");
+        writer.Close();
+    }
+    
     void Update()
     {
         string frame = "[" + DateTime.Now + "]";
@@ -35,6 +47,26 @@ public class Logger : MonoBehaviour
             frame += emotionsString;
         }
         
-        Debug.Log(frame);
+        WriteString(frame, logLocation);
+        
+    }
+    [MenuItem("Tools/Write file")]
+    static void WriteString(string content, string path)
+    {
+
+        //Write some text to the test.txt file
+        StreamWriter writer = new StreamWriter(path, true);
+        writer.WriteLine(content);
+        writer.Close();
+        
+    }
+
+    [MenuItem("Tools/Read file")]
+    static void ReadString(string path)
+    {
+        //Read the text from directly from the test.txt file
+        StreamReader reader = new StreamReader(path); 
+        Debug.Log(reader.ReadToEnd());
+        reader.Close();
     }
 }

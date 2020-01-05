@@ -44,13 +44,23 @@ public class IdleState : StateMachineBehaviour
         */
 
         List<GameObject> inRange = roboBehaviour.InRange("Player");
-
+        
         foreach (GameObject player in inRange)
         {
-            if (roboBehaviour.GetGazedBy().transform.root == player.transform.root)
+            if (roboBehaviour.GetGazedBy() != null && roboBehaviour.GetGazedBy().transform.root == player.transform.root)
             {
-                gV.destination = player.transform.position;
-                animator.SetTrigger("statesCorrect");
+                
+                float happyValue = 1f;
+                SeeEmotion seeEmotion =  roboBehaviour.GetGazedBy().GetComponentInParent<SeeEmotion>();
+                if (seeEmotion != null)
+                {
+                    seeEmotion.emotions.TryGetValue(Emotion.Happy, out happyValue);
+                    if (happyValue < 0.5f)
+                    {
+                        gV.destination = player.transform.position;
+                        animator.SetTrigger("statesCorrect");
+                    }
+                }
             }
         }
     }
