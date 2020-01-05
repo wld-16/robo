@@ -12,6 +12,7 @@ public class globalVars : MonoBehaviour
     public Vector3 roboOrigin;
 
     public float waitingForNextPanel = 2f;
+    public float happyThreshold = 0.2f;
 
     public Vector3 destination;
 

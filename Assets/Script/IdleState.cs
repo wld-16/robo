@@ -28,6 +28,7 @@ public class IdleState : StateMachineBehaviour
         {
             gV.asked = false;
             gV.feedback = false;
+            roboBehaviour.SetGaze(null);
         }
     }
 
@@ -49,13 +50,16 @@ public class IdleState : StateMachineBehaviour
         {
             if (roboBehaviour.GetGazedBy() != null && roboBehaviour.GetGazedBy().transform.root == player.transform.root)
             {
-                
+                Debug.Log(roboBehaviour.GetGazedBy());
                 float happyValue = 1f;
                 SeeEmotion seeEmotion =  roboBehaviour.GetGazedBy().GetComponentInParent<SeeEmotion>();
                 if (seeEmotion != null)
                 {
-                    seeEmotion.emotions.TryGetValue(Emotion.Happy, out happyValue);
-                    if (happyValue < 0.5f)
+                    //seeEmotion.emotions.TryGetValue(Emotion.Happy, out happyValue);
+                    //Debug.Log(happyValue);
+                    happyValue = seeEmotion.GetEmotionMean()[2];
+                    Debug.Log(happyValue);
+                    if (happyValue < gV.happyThreshold)
                     {
                         gV.destination = player.transform.position;
                         animator.SetTrigger("statesCorrect");

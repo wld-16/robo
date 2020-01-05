@@ -69,6 +69,11 @@ public class RoboBehaviour : MonoBehaviour
         return gazedBy;
     }
 
+    public void SetGaze(GameObject GO)
+    {
+        gazedBy = GO;
+    }
+
     void SetGazedBy(object sender, GazeEventArgs gazeEventArgs)
     {
         Vector3 gazedByPosition = gazeEventArgs.hmd.transform.position;
