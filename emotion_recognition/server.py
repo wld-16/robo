@@ -38,7 +38,7 @@ def main():
             do_quit = False
 
             try:
-                cap = cv2.VideoCapture(0)
+                cap = cv2.VideoCapture(cv2.CAP_DSHOW)
                 while cap.isOpened():
                     # sync with client, shut down when receiving 0x1, command has length of 1 byte
                     raw_command = conn.recv(1)

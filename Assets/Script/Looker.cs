@@ -17,6 +17,9 @@ public class Looker : MonoBehaviour
     public Dropdown dropdown;
     public GameObject actionPanel;
 
+    public GameObject feedbackPanel;
+    public Text feedbackText;
+
     public float rangeShow = 40f;
     public bool coroutineRunning = false;
 
@@ -39,9 +42,15 @@ public class Looker : MonoBehaviour
     
     public void SetDestination()
     {
-        gV.destination = destinations[dropdown.value - 1].position;
-        gV.asked = true;
-        StartFollowDialog();
+        if (dropdown.value == 0)
+            Debug.Log("Dropdown Reset");
+        else
+        {
+            gV.destination = destinations[dropdown.value - 1].position;
+            gV.asked = true;
+            dropdown.value = 0;
+            StartFollowDialog();
+        }
     }
 
     public void StartHelpDialog()
@@ -59,9 +68,16 @@ public class Looker : MonoBehaviour
         StartCoroutine(FollowMeStatement());
     }
 
+    public void StartFeedbackDialog()
+    {
+        StartCoroutine(FeedbackStatement());
+    }
+
     IEnumerator HelpDialog()
     {
-        responsePanel.gameObject.SetActive(true);
+        actionPanel.SetActive(false);
+        feedbackPanel.SetActive(false);
+        responsePanel.SetActive(true);
         responseText.text = "Need Help?";
         yield return new WaitForSeconds(3f);
         actionPanel.gameObject.SetActive(true);
@@ -82,6 +98,7 @@ public class Looker : MonoBehaviour
     IEnumerator FollowMeStatement()
     {
         actionPanel.gameObject.SetActive(false);
+        feedbackPanel.SetActive(false);
         responsePanel.gameObject.SetActive(true);
         responseText.text = "Follow me";
         yield return new WaitForSeconds(3f);
@@ -89,4 +106,12 @@ public class Looker : MonoBehaviour
         yield return null;
     }
 
+    IEnumerator FeedbackStatement()
+    {
+        actionPanel.SetActive(false);
+        responsePanel.SetActive(false);
+        feedbackPanel.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        feedbackPanel.SetActive(false);
+    }
 }
