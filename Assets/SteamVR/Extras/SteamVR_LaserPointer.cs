@@ -98,10 +98,11 @@ namespace Valve.VR.Extras
             }
 
             float dist = 100f;
-
+            string layer = "UI";
+            LayerMask mask = LayerMask.GetMask(layer);
             Ray raycast = new Ray(transform.position, transform.forward);
             RaycastHit hit;
-            bool bHit = Physics.Raycast(raycast, out hit);
+            bool bHit = Physics.Raycast(raycast, out hit, mask);
 
             if (previousContact && previousContact != hit.transform)
             {
@@ -138,7 +139,7 @@ namespace Valve.VR.Extras
                 argsClick.fromInputSource = pose.inputSource;
                 argsClick.distance = hit.distance;
                 argsClick.flags = 0;
-                argsClick.target = hit.transform;
+                argsClick.target = hit.collider.transform;
                 OnPointerClick(argsClick);
             }
 

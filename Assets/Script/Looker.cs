@@ -52,6 +52,13 @@ public class Looker : MonoBehaviour
             StartFollowDialog();
         }
     }
+    public void SetDestination(int destinationCode)
+        {
+            gV.destination = destinations[destinationCode].position;
+                gV.asked = true;
+                StartFollowDialog();
+         
+        }
 
     public void StartHelpDialog()
     {
