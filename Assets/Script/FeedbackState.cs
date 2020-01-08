@@ -32,10 +32,7 @@ public class FeedbackState : StateMachineBehaviour
         SeeEmotion seeEmotion = roboBehaviour.GetGazedBy().GetComponentInParent<SeeEmotion>();
         if (seeEmotion != null)
         {
-            //seeEmotion.emotions.TryGetValue(Emotion.Happy, out happyValue);
-            //Debug.Log(happyValue);
-            happyValue = seeEmotion.GetEmotionMean()[2];
-            Debug.Log(happyValue);
+            seeEmotion.emotions.TryGetValue(Emotion.Happy, out happyValue);
             if (happyValue < gV.happyThreshold)
             {
                 gV.asked = false;

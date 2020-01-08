@@ -32,7 +32,6 @@ public class MoveState : StateMachineBehaviour
         {
             var position = follow;
             Vector3 directionVector = position - animator.transform.position;
-            Debug.Log(Vector3.Distance(position, position - (directionVector.normalized * roboBehaviour.stopBefore)));
             navMeshAgent.SetDestination(position - (directionVector.normalized * roboBehaviour.stopBefore));
         }
     }

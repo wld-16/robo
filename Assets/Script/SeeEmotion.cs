@@ -24,12 +24,7 @@ public class SeeEmotion : MonoBehaviour
     [Range(0,1)]
     public float fearSimulation = 0;
     [Range(0,1)]
-    public float neutralSimulation = 0;
-    
-    private float[] emotionMeanTemp = new float[7];
-    private float[] emotionMean = new float[7];
-    private int count = 1;
-    
+    public float neutralSimulation = 0;    
 
     protected Light __light
     {
@@ -116,39 +111,9 @@ public class SeeEmotion : MonoBehaviour
             emotions[Emotion.Fear] =  state.Fear;
             emotions[Emotion.Neutral] =  state.Neutral;
             
-            emotionMeanTemp[0] += state.Angry;
-            emotionMeanTemp[1] += state.Sad;
-            emotionMeanTemp[2] += state.Happy;
-            emotionMeanTemp[3] += state.Disgust;
-            emotionMeanTemp[4] += state.Surprise;
-            emotionMeanTemp[5] += state.Fear;
-            emotionMeanTemp[6] += state.Neutral;
-
-            count++;
-
-            if (count >= 10)
-            {
-                emotionMean = emotionMeanTemp;
-                for (int i = 0; i < emotionMean.Length - 1; i++)
-                {
-                    emotionMean[i] /= count;
-                }
-                count = 1;
-                for (int j = 0; j < emotionMeanTemp.Length - 1; j++)
-                {
-                    emotionMeanTemp[j] = 0;
-                }
-            }
-            
             //Debug.Log(String.Format(
             // "[Angry={0}, Sad={1}, Happy={2}, Disgust={3}, Surprise={4}, Fear={5}, Neutral={6}", state.Angry,
             //state.Sad, state.Happy, state.Disgust, state.Surprise, state.Fear, state.Neutral));
         }
-    }
-    
-    public float[] GetEmotionMean()
-    {
-        return emotionMean;
-    }
-    
+    }    
 }

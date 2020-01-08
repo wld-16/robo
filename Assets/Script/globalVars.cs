@@ -13,6 +13,7 @@ public class globalVars : MonoBehaviour
 
     public float waitingForNextPanel = 2f;
     public float happyThreshold = 0.2f;
+    public float waitForGaze = 3f;
 
     public Vector3 destination;
 

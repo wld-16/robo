@@ -54,7 +54,6 @@ public class Looker : MonoBehaviour
     }
     public void SetDestination(int destinationCode)
         {
-			Debug.Log("Set destination called");
             gV.destination = destinations[destinationCode].position;
                 gV.asked = true;
                 StartFollowDialog();

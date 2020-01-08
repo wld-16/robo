@@ -10,6 +10,9 @@ public class HelpState : StateMachineBehaviour
     NavMeshAgent agent;
     Looker looker;
 
+    float waitingForSecs = 0f;
+    float cancelInteraction = 10f;
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -30,12 +33,9 @@ public class HelpState : StateMachineBehaviour
         gV.feedbackPanel.SetActive(false);
         gV.searchingObjPanel.SetActive(false);
 
-        looker.StartHelpDialog();
-    }
+        waitingForSecs = 0f;
 
-    public void SetDestination(Vector3 pos)
-    {
-        agent.SetDestination(pos);
+        looker.StartHelpDialog();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -43,5 +43,15 @@ public class HelpState : StateMachineBehaviour
     {
         if (gV.asked)
             animator.SetTrigger("findObject");
+
+        waitingForSecs += Time.deltaTime;
+        if (waitingForSecs >= cancelInteraction)
+        {
+            gV.helpPanel.SetActive(false);
+            gV.feedbackPanel.SetActive(false);
+            gV.searchingObjPanel.SetActive(false);
+            gV.destination = gV.roboOrigin;
+            animator.SetTrigger("findObject");
+        }
     }
 }

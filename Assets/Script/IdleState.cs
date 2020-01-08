@@ -35,36 +35,33 @@ public class IdleState : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
-        /*if (roboBehaviour.NotHappy(roboBehaviour.InRange("Player")
-            .Where(GO => roboBehaviour.GetGazedBy() == GO).ToList()
-            .First().GetComponent<EmotionState>()))
-        {
-            animator.SetTrigger(Move);
-        }
-        */
-
         List<GameObject> inRange = roboBehaviour.InRange("Player");
         
         foreach (GameObject player in inRange)
         {
-            if (roboBehaviour.GetGazedBy() != null && roboBehaviour.GetGazedBy().transform.root == player.transform.root)
+            if (roboBehaviour.GetGazedBy() != null && roboBehaviour.GetGazedBy().transform.root == player.transform.root && roboBehaviour.lookTime >= gV.waitForGaze)
             {
-                Debug.Log(roboBehaviour.GetGazedBy());
                 float happyValue = 1f;
                 SeeEmotion seeEmotion =  roboBehaviour.GetGazedBy().GetComponentInParent<SeeEmotion>();
                 if (seeEmotion != null)
                 {
-                    //seeEmotion.emotions.TryGetValue(Emotion.Happy, out happyValue);
-                    //Debug.Log(happyValue);
-                    happyValue = seeEmotion.GetEmotionMean()[2];
-                    Debug.Log(happyValue);
+                    seeEmotion.emotions.TryGetValue(Emotion.Happy, out happyValue);
                     if (happyValue < gV.happyThreshold)
                     {
                         gV.destination = player.transform.position;
                         animator.SetTrigger("statesCorrect");
                     }
                 }
+            }
+            else if(roboBehaviour.GetGazedBy() != null && roboBehaviour.GetGazedBy().transform.root == player.transform.root && roboBehaviour.lookTime <= gV.waitForGaze && roboBehaviour.lookTime != 0)
+            {
+                Vector3 direction = roboBehaviour.GetGazedBy().transform.position - animator.transform.position;
+                Quaternion angle = Quaternion.LookRotation(direction);
+                animator.transform.rotation = Quaternion.Lerp(animator.transform.rotation, angle, Time.deltaTime * 2f);
+            }
+            else if (roboBehaviour.GetGazedBy() != null && roboBehaviour.GetGazedBy().transform.root == player.transform.root && roboBehaviour.lookTime == 0)
+            {
+                animator.transform.rotation = Quaternion.Lerp(animator.transform.rotation, Quaternion.Euler(0f, 0f, 0f), Time.deltaTime * 2f);
             }
         }
     }
