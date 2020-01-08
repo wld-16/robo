@@ -62,6 +62,7 @@ namespace Valve.VR.InteractionSystem
         //-------------------------------------------------
         protected virtual void OnButtonClick()
 		{
+			Debug.Log("Invoke Button Click");
 			onHandClick.Invoke( currentHand );
 		}
 	}

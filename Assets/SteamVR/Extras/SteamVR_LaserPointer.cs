@@ -140,6 +140,9 @@ namespace Valve.VR.Extras
                 argsClick.distance = hit.distance;
                 argsClick.flags = 0;
                 argsClick.target = hit.collider.transform;
+				Debug.Log("Hit: " + hit);
+				Debug.Log("Hit Transform Name: " + hit.transform.name);
+				Debug.Log("Args Target: " + argsClick.target);
                 OnPointerClick(argsClick);
             }
 
