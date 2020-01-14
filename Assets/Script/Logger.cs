@@ -16,18 +16,21 @@ public class Logger : MonoBehaviour
     public Transform robotHead;
     private HandleTextFile handleTextFile;
     public string logLocation;
+    public bool willDebug;
 
     void Start()
     {
         StreamWriter writer = new StreamWriter(logLocation, false);
-        writer.WriteLine("");
+        writer.WriteLine("timestamp;person position;;;person rotation;;;robot position;;;robot rotation;emotions");
+        writer.WriteLine(";x;y;z;x;y;z;x;y;z;x;y;z;Angry;Sad;Happy;Disgust;Surprise;Fear;Neutral");
         writer.Close();
     }
     
     void Update()
     {
-        string frame = "[" + DateTime.Now + "]";
-
+        string printFileFrame = "" + DateTime.Now + ";";
+        string frame = "";
+        
         Vector3 playerPosition = playerHead.position;
         Vector3 playerRotation = playerHead.rotation.eulerAngles;
         Vector3 robotHeadPosition = robotHead.position;
@@ -38,16 +41,31 @@ public class Logger : MonoBehaviour
         frame += string.Format("[robot position/x={0},y={1},z={2}]", robotHeadPosition.x, robotHeadPosition.y, robotHeadPosition.z);
         frame += string.Format("[robot rotation/x={0},y={1},z={2}]", robotHeadRotation.x, robotHeadRotation.y, robotHeadRotation.z);
 
+        
+        printFileFrame += string.Format("{0};{1};{2};", playerPosition.x, playerPosition.y, playerPosition.z);
+        printFileFrame += string.Format("{0};{1};{2};", playerRotation.x, playerRotation.y, playerRotation.z);
+        printFileFrame += string.Format("{0};{1};{2};", robotHeadPosition.x, robotHeadPosition.y, robotHeadPosition.z);
+        printFileFrame += string.Format("{0};{1};{2};", robotHeadRotation.x, robotHeadRotation.y, robotHeadRotation.z);
+
+        
         if (seeEmotion != null && seeEmotion.emotions != null)
         {
-            string emotionsString = "[";
-            seeEmotion.emotions.ForEach(pair => emotionsString += pair.Key + "=" + pair.Value + ", ");
-            emotionsString = emotionsString.Substring(0, emotionsString.Length - 2) + "]";
+            string emotionsString = "";
+            seeEmotion.emotions.ForEach(pair => emotionsString += pair.Value + "; ");
+            printFileFrame += emotionsString;
+            
+            string emotionsDebugString = "[";
+            seeEmotion.emotions.ForEach(pair => emotionsDebugString += pair.Key + "=" + pair.Value + ", ");
+            emotionsDebugString = emotionsDebugString.Substring(0, emotionsDebugString.Length - 2) + "]";
 
-            frame += emotionsString;
+            frame += emotionsDebugString;
         }
-        
-        WriteString(frame, logLocation);
+
+        if (willDebug)
+        {
+            Debug.Log(frame);
+        }
+        WriteString(printFileFrame, logLocation);
         
     }
     [MenuItem("Tools/Write file")]

@@ -122,7 +122,7 @@ public abstract class WebCamClient<TState> : MonoBehaviour {
                 try {
                     this.OnChange.Invoke (newStates, oldEmotionStates);
                 } catch (Exception e) {
-                    Debug.LogError (e);
+                    //Debug.LogError (e);
                 }
             }
         }
